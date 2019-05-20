@@ -1,8 +1,27 @@
+const sinon = require('sinon');
+const chai = require('chai')
+const sinonChai = require('sinon-chai');
+
+chai.use(sinonChai);
+let spy = sinon.spy();
+
 describe('index', () => {
   const code = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]
 
   function triggerKeyDown(which) {
     const keyboardEvent = document.createEvent("KeyboardEvent")
+
+    // http://stackoverflow.com/questions/10455626/keydown-simulation-in-chrome-fires-normally-but-not-the-correct-key/10520017#10520017
+    Object.defineProperty(keyboardEvent, 'keyCode', {
+      get: function() {
+        return this.keyCodeVal;
+      }
+    });
+    Object.defineProperty(keyboardEvent, 'which', {
+      get: function() {
+        return this.keyCodeVal;
+      }
+    });
 
     keyboardEvent.initKeyboardEvent(
       'keydown',
@@ -12,9 +31,11 @@ describe('index', () => {
       which,
       which,
       0,
-      null,
-      null
+      which,
+      which
     )
+
+    keyboardEvent.keyCodeVal = which
 
     document.body.dispatchEvent(keyboardEvent)
   }
@@ -23,25 +44,25 @@ describe('index', () => {
     it('triggers an alert if the right code is entered', () => {
       init()
 
-      window.alert = expect.createSpy()
+      window.alert = sinon.spy();
 
       for (let i = 0, l = code.length; i < l; i++) {
         triggerKeyDown(code[i])
       }
 
-      expect(window.alert).toHaveBeenCalled()
+      expect(window.alert).to.have.been.called
     })
 
     it('does not trigger an alert if the wrong code is entered', () => {
       init()
 
-      window.alert = expect.createSpy()
+      window.alert = sinon.spy();
 
       for (let i = 0, l = code.length; i < l; i++) {
         triggerKeyDown(i)
       }
 
-      expect(window.alert).toNotHaveBeenCalled()
+      expect(window.alert).to.not.have.been.called
     })
   })
 })
