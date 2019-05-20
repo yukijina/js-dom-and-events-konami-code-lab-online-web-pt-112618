@@ -1,3 +1,10 @@
+const sinon = require('sinon');
+const chai = require('chai')
+const sinonChai = require('sinon-chai');
+
+chai.use(sinonChai);
+let spy = sinon.spy();
+
 describe('index', () => {
   const code = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]
 
@@ -37,25 +44,25 @@ describe('index', () => {
     it('triggers an alert if the right code is entered', () => {
       init()
 
-      window.alert = expect.createSpy()
+      window.alert = sinon.spy();
 
       for (let i = 0, l = code.length; i < l; i++) {
         triggerKeyDown(code[i])
       }
 
-      expect(window.alert).toHaveBeenCalled()
+      expect(window.alert).to.have.been.called
     })
 
     it('does not trigger an alert if the wrong code is entered', () => {
       init()
 
-      window.alert = expect.createSpy()
+      window.alert = sinon.spy();
 
       for (let i = 0, l = code.length; i < l; i++) {
         triggerKeyDown(i)
       }
 
-      expect(window.alert).toNotHaveBeenCalled()
+      expect(window.alert).to.not.have.been.called
     })
   })
 })

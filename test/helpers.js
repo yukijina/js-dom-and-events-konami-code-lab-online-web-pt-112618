@@ -1,9 +1,12 @@
 const chai = require('chai')
 global.expect = chai.expect
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
 const fs = require('file-system')
 const jsdom = require('mocha-jsdom')
 const path = require('path')
 const babel = require('babel-core');
+chai.use(sinonChai);
 
 const html = fs.readFileSync(path.resolve(__dirname, '..', 'index.html'), 'utf-8')
 
